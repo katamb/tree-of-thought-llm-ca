@@ -32,7 +32,7 @@ class TextTask(Task):
     def test_output(self, idx: int, output: str):
         output = output.split('Passage:\n')[-1]
         prompt = score_prompt + output
-        score_outputs = gpt(prompt, n=5, model='gpt-4')
+        score_outputs = gpt(prompt, n=5, model='gpt-4-0125-preview')
         scores = []
         for score_output in score_outputs:
             # print(score_output)
