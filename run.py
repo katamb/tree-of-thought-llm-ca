@@ -1,10 +1,12 @@
 import os
 import json
 import argparse
+import time
 
 from tot.tasks import get_task
 from tot.methods.bfs import solve, naive_solve
-from tot.models import gpt_usage
+from tot.models import gpt_usage, get_tokens
+
 
 def run(args):
     task = get_task(args.task)
@@ -16,11 +18,18 @@ def run(args):
     os.makedirs(os.path.dirname(file), exist_ok=True)
 
     for i in range(args.task_start_index, args.task_end_index):
+        # previous data
+        previous_pt = get_tokens()[1]
+        previous_ct = get_tokens()[0]
+        prior_costs = gpt_usage(args.backend)
+
         # solve
+        start_time = time.time()
         if args.naive_run:
             ys, info = naive_solve(args, task, i) 
         else:
             ys, info = solve(args, task, i)
+        end_time = time.time()
 
         # log
         infos = [task.test_output(i, y) for y in ys]
@@ -34,7 +43,11 @@ def run(args):
         cnt_avg += sum(accs) / len(accs)
         cnt_any += any(accs)
         print(i, 'sum(accs)', sum(accs), 'cnt_avg', cnt_avg, 'cnt_any', cnt_any, '\n')
-    
+
+        # Write code analysis information (ys is output)
+        time_taken = end_time - start_time
+        task.write_result(i, args.backend, ys, time_taken, previous_ct, previous_pt, prior_costs)
+
     n = args.task_end_index - args.task_start_index
     print(cnt_avg / n, cnt_any / n)
     print('usage_so_far', gpt_usage(args.backend))

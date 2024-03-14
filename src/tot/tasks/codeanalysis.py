@@ -1,8 +1,30 @@
 import os
 import re
+from datetime import date
 from tot.tasks.base import Task, DATA_PATH
 from tot.prompts.codeanalysis import *
-from tot.models import gpt
+from tot.models import gpt, gpt_usage, get_tokens
+
+
+def clean_result(text):
+    pattern = r'\b(?:cwe-|CWE-|cwe|CWE)(\d+)\b'
+    matches = re.findall(pattern, text, re.IGNORECASE)
+    unique_matches = set(matches)
+    formatted_matches = [f'CWE-{match}' for match in unique_matches]
+    return " ".join(formatted_matches)
+
+
+def get_cwes(input_text):
+    vulnerabilities = ""
+    if "\n" in input_text:
+        for line in input_text.split("\n"):
+            if "vulnerability: YES |" in line.strip():
+                vulnerabilities += clean_result(line.strip()) + " "
+    else:
+        if "vulnerability: YES |" in input_text.strip():
+            vulnerabilities += clean_result(input_text.strip()) + " "
+
+    return vulnerabilities.strip()
 
 
 class CodeAnalysisTask(Task):
@@ -13,13 +35,14 @@ class CodeAnalysisTask(Task):
     Input Example: 
     Output Example: 
     """
-    def __init__(self, file='J11609.java'):
+    def __init__(self, file='file_names.txt'):
         """
         file: a text file, each line is some sentences
         """
         super().__init__()
         path = os.path.join(DATA_PATH, 'codeanalysis', file)
-        self.data = open(path).read()
+        self.data = open(path).readlines()
+        self.directory_path = os.path.join("home", "thesis", "src", "testcases")
         self.steps = 8
         self.stops = [
             'Review User Input Handling',
@@ -34,13 +57,40 @@ class CodeAnalysisTask(Task):
 
     def __len__(self) -> int:
         return len(self.data)
-    
+
     def get_input(self, idx: int) -> str:
-        return self.data #[idx]
+        file_name = self.data[idx]
+        for root, dirs, files in os.walk(self.directory_path):
+            for file in files:
+                if file_name in file:
+                    file_path = os.path.join(root, file)
+                    with open(file_path, 'r') as f:
+                        content = f.readlines()
+                    content[0] = "package com.bank.service;\n"  # remove package name to avoid leaking clues to LLM
+
+                    for i, line in enumerate(content):  # remove whitespace to save on tokens
+                        content[i] = line.strip()
+                    return "\n".join(content)
     
-    def test_output(self, idx: int, output: str):  # todo
+    def test_output(self, idx: int, output: str):  # todo Is there any point here?
         return {'r': 10}
-    
+
+    def write_result(self, idx, model, model_output, time_taken, previous_ct, previous_pt, prior_costs):
+        cwes = get_cwes(model_output)
+        with open("results.csv", "a") as res:
+            res.write(
+                f"{model};"
+                f"juliet-top-25-subset-34;"
+                f"cot_high_level;"
+                f"{self.data[idx]};"
+                f"{len(cwes) != 0};"
+                f"{cwes};"
+                f"{time_taken};"
+                f"total_tokens: {get_tokens()[0] - previous_ct + get_tokens()[1] - previous_pt}, completion_tokens: {get_tokens()[0] - previous_ct}, prompt_tokens: {get_tokens()[1] - previous_pt};"
+                f"{gpt_usage(model) - prior_costs};"
+                f"{str(date.today())}\n"
+            )
+
     #@staticmethod
     #def standard_prompt_wrap(x: str, y:str='') -> str:
     #    return standard_prompt.format(input=x) + y
@@ -50,7 +100,7 @@ class CodeAnalysisTask(Task):
         return cot_prompt.format(input=x) + y
 
     @staticmethod
-    def vote_prompt_wrap(x: str, ys: list) -> str:
+    def vote_prompt_wrap(x: str, ys: list) -> str:  # todo potentially include the code in the vote system too?
         prompt = vote_prompt
         for i, y in enumerate(ys, 1):
             # y = y.replace('Plan:\n', '')
