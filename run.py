@@ -5,7 +5,7 @@ import time
 
 from tot.tasks import get_task
 from tot.methods.bfs import solve, naive_solve
-from tot.models import gpt_usage, get_tokens
+from tot.models import gpt_usage
 
 
 def run(args):
@@ -19,9 +19,7 @@ def run(args):
 
     for i in range(args.task_start_index, args.task_end_index):
         # previous data
-        previous_pt = get_tokens()[1]
-        previous_ct = get_tokens()[0]
-        prior_costs = gpt_usage(args.backend)
+        prior_gpt_usage = gpt_usage(args.backend)
 
         # solve
         start_time = time.time()
@@ -46,7 +44,7 @@ def run(args):
 
         # Write code analysis information (ys is output)
         time_taken = end_time - start_time
-        task.write_result(i, args.backend, ys, time_taken, previous_ct, previous_pt, prior_costs)
+        task.write_result(i, args.backend, ys, time_taken, prior_gpt_usage)
 
     n = args.task_end_index - args.task_start_index
     print(cnt_avg / n, cnt_any / n)
@@ -59,8 +57,8 @@ def parse_args():
     args.add_argument('--temperature', type=float, default=0.7)
 
     args.add_argument('--task', type=str, choices=['game24', 'text', 'crosswords', 'codeanalysis'], default='codeanalysis')
-    args.add_argument('--task_start_index', type=int, default=0)
-    args.add_argument('--task_end_index', type=int, default=34)
+    args.add_argument('--task_start_index', type=int, default=1)
+    args.add_argument('--task_end_index', type=int, default=10)
 
     args.add_argument('--naive_run', action='store_true')
     args.add_argument('--prompt_sample', type=str, choices=['standard', 'cot'], default='cot')  # only used when method_generate = sample, or naive_run

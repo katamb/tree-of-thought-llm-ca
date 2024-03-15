@@ -15,5 +15,5 @@ class Task:
     def test_output(self, idx: int, output: str):
         pass
 
-    def write_result(self, idx: int, model: str, model_output: str, time_taken: float, previous_ct: int, previous_pt: int, prior_costs: float):
+    def write_result(self, idx: int, model: str, model_output: str, time_taken: float, prior_gpt_usage: dict):
         pass

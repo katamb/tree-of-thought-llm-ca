@@ -1,1 +1,2 @@
 llm_model;dataset;prompt_name;file_name;vulnerability_present;cwe_ids;time_taken (in seconds);tokens_used;cost (in dollars);created_at
+gpt-4-0125-preview;juliet-top-25-subset-34;cot_high_level;J10126;True;CWE-129 CWE-20 CWE-400 CWE-404 CWE-532;202.38827180862427;total_tokens: 32714, completion_tokens: 8729, prompt_tokens: 23985;0.5017199999999999;2024-03-15

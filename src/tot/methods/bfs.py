@@ -44,7 +44,7 @@ def get_samples(task, x, y, n_generate_sample, prompt_sample, stop, idx):
     else:
         raise ValueError(f'prompt_sample {prompt_sample} not recognized')
     samples = gpt(prompt, n=n_generate_sample, stop=stop)
-    return [y + _ for _ in samples]
+    return [y + "\n----\n" + _ for _ in samples]
 
 def solve(args, task, idx, to_print=True):
     global gpt
