@@ -1,8 +1,9 @@
 cot_prompt = '''
-As a security researcher, you are tasked with reporting security vulnerabilities. You are currently looking at the following code:
+As a security researcher, you must analyse the given code and respond to the step number {step}. If there are previous steps, the answers to them have already been provided and must be considered accurate. You are currently looking at the following code:
 ```java
 {input}
 ```
+Steps:
 1. Identify All Weaknesses: Identify which vulnerabilities could be present in the following code.
 2. Review User Input Handling: Look for any input sources that are not properly validated or sanitized before being used in unsafe manner. If variable that is passed into unsafe function is not directly influenced by external user input, the vulnerability is not currently present and must not be reported.
 3. Analyze Data Flow: Trace the flow of untrusted data to the system command. Ensure that there are no points where user-controlled input can directly influence the command execution.

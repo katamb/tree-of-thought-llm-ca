@@ -210,7 +210,7 @@ class MiniCrosswordsTask(Task):
         return standard_prompt.format(input=x) + y
 
     @staticmethod
-    def cot_prompt_wrap(x: str, y:str='') -> str:
+    def cot_prompt_wrap(x: str, y: str = '', idx: int = 0) -> str:
         return cot_prompt.format(input=x) + y
     
     def propose_prompt_wrap(self, x: str, y: str='') -> str:

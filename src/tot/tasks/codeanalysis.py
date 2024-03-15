@@ -35,6 +35,7 @@ class CodeAnalysisTask(Task):
     Input Example: 
     Output Example: 
     """
+
     def __init__(self, file='file_names.txt'):
         """
         file: a text file, each line is some sentences
@@ -71,7 +72,7 @@ class CodeAnalysisTask(Task):
                     for i, line in enumerate(content):  # remove whitespace to save on tokens
                         content[i] = line.strip()
                     return "\n".join(content)
-    
+
     def test_output(self, idx: int, output: str):  # todo Is there any point here?
         return {'r': 10}
 
@@ -91,13 +92,13 @@ class CodeAnalysisTask(Task):
                 f"{str(date.today())}\n"
             )
 
-    #@staticmethod
-    #def standard_prompt_wrap(x: str, y:str='') -> str:
+    # @staticmethod
+    # def standard_prompt_wrap(x: str, y:str='') -> str:
     #    return standard_prompt.format(input=x) + y
 
     @staticmethod
-    def cot_prompt_wrap(x: str, y:str='') -> str:
-        return cot_prompt.format(input=x) + y
+    def cot_prompt_wrap(x: str, y: str = '', idx: int = 0) -> str:
+        return cot_prompt.format(input=x, step=(idx + 1)) + y
 
     @staticmethod
     def vote_prompt_wrap(x: str, ys: list) -> str:
@@ -107,7 +108,7 @@ class CodeAnalysisTask(Task):
             # TODO: truncate the plan part?
             prompt += f'Choice {i}:\n{y}\n'
         return prompt
-    
+
     @staticmethod
     def vote_outputs_unwrap(vote_outputs: list, n_candidates: int) -> list:
         vote_results = [0] * n_candidates
