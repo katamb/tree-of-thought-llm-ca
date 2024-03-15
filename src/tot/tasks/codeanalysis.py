@@ -76,7 +76,7 @@ class CodeAnalysisTask(Task):
         return {'r': 10}
 
     def write_result(self, idx, model, model_output, time_taken, previous_ct, previous_pt, prior_costs):
-        cwes = get_cwes(model_output)
+        cwes = get_cwes(model_output[0])
         with open("results.csv", "a") as res:
             res.write(
                 f"{model};"
@@ -100,8 +100,8 @@ class CodeAnalysisTask(Task):
         return cot_prompt.format(input=x) + y
 
     @staticmethod
-    def vote_prompt_wrap(x: str, ys: list) -> str:  # todo potentially include the code in the vote system too?
-        prompt = vote_prompt
+    def vote_prompt_wrap(x: str, ys: list) -> str:
+        prompt = vote_prompt.format(input=x)
         for i, y in enumerate(ys, 1):
             # y = y.replace('Plan:\n', '')
             # TODO: truncate the plan part?

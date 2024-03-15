@@ -16,7 +16,11 @@ As a security researcher, you are tasked with reporting security vulnerabilities
 '''
 
 # Evaluate
-vote_prompt = '''Given an instruction and several choices, decide which choice is most promising. Analyze each choice in detail, then conclude in the last line "The best choice is {s}", where s the integer id of the choice.
+vote_prompt = '''Given a code snippet and several choices for the analysis of this code, decide which choice is best and most accurate. Code:
+```java
+{input}
+```
+Analyze each choice in detail, then conclude in the last line "The best choice is {{s}}", where s the integer id of the choice.
 '''
 
 # Score - NOT USED
