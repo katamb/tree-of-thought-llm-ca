@@ -122,7 +122,7 @@ class CodeAnalysisTask(Task):
             res.write(
                 f"{model};"
                 f"juliet-top-25-subset-34;"
-                f"cot_high_level;"
+                f"tot_high_level;"
                 f"{self.data[idx].strip()};"
                 f"{len(cwes) != 0};"
                 f"{cwes};"
