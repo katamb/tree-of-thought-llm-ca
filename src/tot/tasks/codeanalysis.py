@@ -18,10 +18,10 @@ def get_cwes(input_text):
     vulnerabilities = ""
     if "\n" in input_text:
         for line in input_text.split("\n"):
-            if "vulnerability: YES |" in line.strip():
+            if ": YES |" in line.strip():
                 vulnerabilities += clean_result(line.strip()) + " "
     else:
-        if "vulnerability: YES |" in input_text.strip():
+        if ": YES |" in input_text.strip():
             vulnerabilities += clean_result(input_text.strip()) + " "
 
     return vulnerabilities.strip()
