@@ -42,7 +42,7 @@ class CodeAnalysisTask(Task):
         super().__init__()
         path = os.path.join(DATA_PATH, 'codeanalysis', file)
         self.data = open(path).readlines()
-        self.directory_path = os.path.join("home", "thesis", "src", "testcases")
+        self.directory_path = os.path.join("/home", "thesis", "juliet-top-25", "src", "testcases")
         self.steps = 8
         self.stops = [
             'Review User Input Handling',
@@ -59,7 +59,7 @@ class CodeAnalysisTask(Task):
         return len(self.data)
 
     def get_input(self, idx: int) -> str:
-        file_name = self.data[idx]
+        file_name = self.data[idx].strip()
         for root, dirs, files in os.walk(self.directory_path):
             for file in files:
                 if file_name in file:
@@ -82,7 +82,7 @@ class CodeAnalysisTask(Task):
                 f"{model};"
                 f"juliet-top-25-subset-34;"
                 f"cot_high_level;"
-                f"{self.data[idx]};"
+                f"{self.data[idx].strip()};"
                 f"{len(cwes) != 0};"
                 f"{cwes};"
                 f"{time_taken};"
