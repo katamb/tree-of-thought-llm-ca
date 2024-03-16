@@ -57,8 +57,8 @@ def parse_args():
     args.add_argument('--temperature', type=float, default=0.7)
 
     args.add_argument('--task', type=str, choices=['game24', 'text', 'crosswords', 'codeanalysis'], default='codeanalysis')
-    args.add_argument('--task_start_index', type=int, default=0)
-    args.add_argument('--task_end_index', type=int, default=34)
+    args.add_argument('--task_start_index', type=int, default=34)
+    args.add_argument('--task_end_index', type=int, default=68)
 
     args.add_argument('--naive_run', action='store_true')
     args.add_argument('--prompt_sample', type=str, choices=['standard', 'cot'], default='cot')  # only used when method_generate = sample, or naive_run
