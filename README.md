@@ -77,7 +77,10 @@ The very simple ``run.py`` implements the ToT + BFS algorithm, as well as the na
 - ``--n_evaluate_sample``: number of times to prompt for state evaluation
 - ``--n_select_sample``: number of states to keep from each step (i.e. ``b`` in the paper's ToT + BFS algorithm)
 
-
+## ToT code analysis
+Added vulnerability analysis task support. The default settings in `run.py` were changed to run the code analysis by default.
+To run the analysis, you must add file names you wish to analyse to the `tot/data/codeanalysis/file_names.txt` file, which each file in a new line. 
+Then make sure the `self.directory_path` variable in  `tot/tasks/codeanalysis.py` file points to the directory, in which the files are located. 
 
 ## Paper Trajectories
 ``logs/`` contains all the trajectories from the paper's experiments, except for ``logs/game24/gpt-4_0.7_propose1_value3_greedy5_start900_end1000.json`` which was reproduced after the paper (as the original experiment was done in a notebook) and achieved a 69\% score instead of the original 74\% score due to randomness in GPT decoding. We hope to aggregate multiple runs in the future to account for sampling randomness and update the paper, but this shouldn't affect the main conclusions of the paper.
